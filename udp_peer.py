@@ -17,12 +17,9 @@ async def ricevi_messaggi(localAddress):
     print(f"[INFO] In ascolto su {localAddress}")
 
     while True:
-        #         data, addr = await loop.sock_recvfrom(udp_socket, 1024)
-        #         messaggio = data.decode()
-        #         print(f"\n[{addr}] {messaggio}")
         data = await loop.sock_recv(udp_socket, 1024)
         messaggio = data.decode()
-        print(f"\n[LUI/LEI/L'ALTRO] {messaggio}")
+        print(f"\n[L'ALTRO] {messaggio}")
 
 
 async def invia_messaggi(remoteAddress):
@@ -41,10 +38,6 @@ async def invia_messaggi(remoteAddress):
         messaggio = await loop.run_in_executor(None, input)
         messaggio = messaggio.strip()
 
-        if messaggio.lower() == "/quit":
-            print("[INFO] Chiusura peer... Adesso premi CTRL + C")
-            break
-
         if messaggio:
             # Invia il messaggio
             udp_socket.sendto(messaggio.encode(), remoteAddress)
@@ -56,7 +49,10 @@ async def invia_messaggi(remoteAddress):
 async def runPeer(localAddress, remoteAddress):
 
     # Esegue entrambe le funzioni contemporaneamente
-    await asyncio.gather(ricevi_messaggi(localAddress), invia_messaggi(remoteAddress))
+    await asyncio.gather(
+        ricevi_messaggi(localAddress),
+        invia_messaggi(remoteAddress)
+    )
 
 
 if __name__ == "__main__":

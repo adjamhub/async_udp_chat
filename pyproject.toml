@@ -13,5 +13,5 @@ gui = [
     "wxpython>=4.2.4",
 ]
 
-[project.scripts]
-AsyncUDPChat = "main:run"
+# [project.scripts]
+# AsyncUDPChat = "main:run"
