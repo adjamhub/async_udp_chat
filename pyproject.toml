@@ -3,6 +3,9 @@ name = "async-udp-chat"
 version = "0.1.0"
 description = "Async UDP Chat: peer, server-client, wx GUI mode"
 readme = "README.md"
+authors = [
+    { name = "Andrea Diamantini", email = "adjam@proton.me" }
+]
 requires-python = ">=3.11"
 dependencies = [
 ]
@@ -13,5 +16,10 @@ gui = [
     "wxpython>=4.2.4",
 ]
 
-# [project.scripts]
-# AsyncUDPChat = "main:run"
+[project.scripts]
+async_udp_chat = "async_udp_chat:main"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
