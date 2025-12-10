@@ -43,15 +43,17 @@ async def recvMessage(udp_socket):
 
 
 async def runClient(server_port):
-    host = input("Server host or IP: ")
+    server_host = input("Server host or IP: ")
     name = input("Nome: ")
 
-    serverAddress = (host, server_port)
+    serverAddress = (server_host, server_port)
 
     import random
 
-    port = random.randint(22223, 55555)
-    clientAddress = ("192.168.1.114", port)
+    client_host = socket.gethostname()
+    client_ip = socket.gethostbyname(client_host)
+    client_port = random.randint(22223, 55555)
+    clientAddress = (client_ip, client_port)
 
     # UDP socket
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
