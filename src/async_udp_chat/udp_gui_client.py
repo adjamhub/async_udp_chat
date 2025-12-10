@@ -2,16 +2,15 @@
 # UDP GUI Client
 
 
-import wx
-import wxasync
-
 import asyncio
 import socket
 import sys
 
+import wx
+import wxasync
 
-class Esempio(wx.Frame):
 
+class ChatWindow(wx.Frame):
     def __init__(self, name, clientAddress, serverAddress):
         super().__init__(None, title="Async UDP Client Chat")
 
@@ -55,26 +54,25 @@ class Esempio(wx.Frame):
         panel.SetSizer(vbox)
         self.Centre()
 
-        # Adesso inizia la ricezione!
+        # And now start receiving...
         wxasync.StartCoroutine(self.recvMessage, self)
 
     async def sendMessage(self, evt):
-        messaggio = self.tc1.Value.strip()
+        msg = self.tc1.Value.strip()
 
-        if messaggio:
-            # Invia il messaggio
-            self.udp_socket.sendto(messaggio.encode(), self.serverAddress)
-            self.msgList.Append(f"[IO] {messaggio}")
+        if msg:
+            # Send it!
+            self.udp_socket.sendto(msg.encode(), self.serverAddress)
+            self.msgList.Append(f"[IO] {msg}")
 
         self.tc1.Clear()
         return
 
     async def recvMessage(self):
-
         while True:
             data = await self.loop.sock_recv(self.udp_socket, 1024)
-            messaggio = data.decode()
-            self.msgList.Append(messaggio)
+            msg = data.decode()
+            self.msgList.Append(msg)
 
         return
 
@@ -82,20 +80,31 @@ class Esempio(wx.Frame):
 # ---------------------------------------------------------------------------------
 
 
-async def runGuiClient(clientAddress, serverAddress):
-
-    print(f"Ciaone da {clientAddress} che invia a {serverAddress}")
-
+async def runGuiClient(server_port):
     # THE App...
     app = wxasync.WxAsyncApp()
 
-    diag = wx.TextEntryDialog(None, "Inserisci nome")
-    if diag.ShowModal() != wx.ID_OK:
+    diag1 = wx.TextEntryDialog(None, "Server host or IP: ")
+    if diag1.ShowModal() != wx.ID_OK:
         sys.exit(0)
+    server_host = diag1.GetValue()
 
-    name = diag.GetValue()
+    diag2 = wx.TextEntryDialog(None, "Set Name: ")
+    if diag2.ShowModal() != wx.ID_OK:
+        sys.exit(0)
+    name = diag2.GetValue()
 
-    window = Esempio(name, clientAddress, serverAddress)
+    serverAddress = (server_host, server_port)
+
+    # client address
+    import random
+
+    client_host = socket.gethostname()
+    client_ip = socket.gethostbyname(client_host)
+    client_port = random.randint(22223, 55555)
+    clientAddress = (client_ip, client_port)
+
+    window = ChatWindow(name, clientAddress, serverAddress)
     window.Show()
 
     app.SetTopWindow(window)
@@ -105,16 +114,12 @@ async def runGuiClient(clientAddress, serverAddress):
 # ---------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import random
 
-    clientPort = random.randint(20001, 50000)
-    clientAddress = ("127.0.0.1", clientPort)
-
-    serverAddress = ("127.0.0.1", 20000)
+    server_port = 22222
 
     try:
-        asyncio.run(runGuiClient(clientAddress, serverAddress))
+        asyncio.run( runGuiClient( server_port )
 
-    # serve per chiudere CORRETTAMENTE cliccando CTRL + C
+    # close on CTRL + C
     except KeyboardInterrupt:
-        print("[INFO] Chiusura GUI client")
+        print("[INFO] Closing GUI client")
