@@ -5,14 +5,14 @@ import asyncio
 import socket
 
 
-async def udpServer(serverAddress):
-    """Funzione che implementa un chat server UDP in grado di ricevere msg e reinviarli a tutti"""
+async def udpServer(server_port):
+    serverAddress = ("0.0.0.0", server_port)
 
     clientList = {}
 
     loop = asyncio.get_running_loop()
 
-    # Crea il socket UDP
+    # UDP socket
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_socket.bind(serverAddress)
     udp_socket.setblocking(False)
@@ -22,43 +22,40 @@ async def udpServer(serverAddress):
     # Listen for incoming datagrams
     while True:
         data, address = await loop.sock_recvfrom(udp_socket, 1024)
-        messaggio = data.decode()
+        msg = data.decode()
 
-        # procedura di connessione
-        if messaggio.startswith("CONNECT"):
-            wordList = messaggio.split()
+        # connection protocol
+        if msg.startswith("CONNECT"):
+            wordList = msg.split()
             name = wordList[1]
             clientList[address] = name
             continue
 
         sender = clientList.get(address, "boh")
-        msg = f"[{sender}] {messaggio}"
-        print(msg)
+        name_msg = f"[{sender}] {msg}"
+        print(name_msg)
         for addr in clientList:
             if addr != address:
-                udp_socket.sendto(msg.encode(), addr)
+                udp_socket.sendto(name_msg.encode(), addr)
                 print(f"sending to {addr}")
 
     udp_socket.close()
 
 
-async def runServer(serverAddress):
-
-    # Esegue entrambe le funzioni contemporaneamente
+async def runServer(server_port):
+    # async gather execution
     await asyncio.gather(
-        udpServer(serverAddress),
+        udpServer(server_port),
     )
 
 
 if __name__ == "__main__":
-
-    # server address
-    localAddress = ("127.0.0.1", 20001)
+    server_port = 22222
 
     try:
-        # serve per eseguire il processo in maniera asincrona
-        asyncio.run(runServer(localAddress))
+        # async run server
+        asyncio.run(runServer(server_port))
 
-    # serve per chiudere CORRETTAMENTE cliccando CTRL + C
+    # close on CTRL + C
     except KeyboardInterrupt:
-        print("[INFO] Peer terminato")
+        print("[INFO] Server closed.")
