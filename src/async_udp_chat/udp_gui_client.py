@@ -114,11 +114,10 @@ async def runGuiClient(server_port):
 # ---------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-
     server_port = 22222
 
     try:
-        asyncio.run( runGuiClient( server_port )
+        asyncio.run(runGuiClient(server_port))
 
     # close on CTRL + C
     except KeyboardInterrupt:

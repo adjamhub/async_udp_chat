@@ -55,7 +55,7 @@ def main():
         if args.gui:
             print("[INFO] GUI client mode")
             # included here cause of the OPTIONAL wx deps
-            import async_udp_chat.udp_gui_client
+            from async_udp_chat import udp_gui_client
 
             asyncio.run(udp_gui_client.runGuiClient(server_port))
             sys.exit(0)
