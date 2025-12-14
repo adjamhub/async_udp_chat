@@ -1,6 +1,6 @@
 # Async UDP Chat
 
-Just an easy and didactic project to implement an async client-server chat based on the UDP sockets
+Easy module for an async UDP chat server or client, implemented for didactic purpose.
 
 
 ## server mode

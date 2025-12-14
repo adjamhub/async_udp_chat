@@ -3,6 +3,7 @@ name = "async-udp-chat"
 version = "0.1.0"
 description = "Async UDP Chat: peer, server-client, wx GUI mode"
 readme = "README.md"
+license = "MIT"
 authors = [
     { name = "Andrea Diamantini", email = "adjam@proton.me" }
 ]
@@ -22,4 +23,3 @@ async_udp_chat = "async_udp_chat:main"
 [build-system]
 requires = ["uv_build>=0.9.17,<0.10.0"]
 build-backend = "uv_build"
-
